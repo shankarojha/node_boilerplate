@@ -33,9 +33,9 @@ let createNewExpense = (req, res) => {
         return new Promise((resolve, reject) => {
             let newExpense = new ExpenseModel({
                 ExpenseId: shortid.generate(),
-                ExpenseId: shortid.generate(),
                 createdBy: req.body.createdBy,
                 paidBy: req.body.paidBy,
+                members:req.body.paidBy,
                 amount: req.body.amount,
                 createdOn: time.now(),
                 modifiedOn: time.now()
@@ -71,12 +71,10 @@ let createNewExpense = (req, res) => {
 
             console.log('req.body ===>' + arrayCommuted[0].email) //checked
             for (let x of arrayCommuted) {
-                console.log(x)
-                // console.log(req.body.debtors) //checked
-                // console.log(req.body.debtors[x].email,req.body.debtors[x].paid)
                 ExpenseModel.updateOne({ ExpenseId: newExpense.ExpenseId }, {
                     $push: {
-                        debtors: { email: x.email, paid: x.paid }
+                        debtors: { email: x.email, paid: x.paid },
+                        members:x.email
                     }
                 }, (err, result) => {
                     if (err) {
@@ -119,16 +117,20 @@ let editExpense = (req, res) => {
     let editBody = () => {
         return new Promise((resolve, reject) => {
             let options = req.body;
-            console.log(req.body.ExpenseId)
-            console.log('paidby'+options.paidBy)
-            ExpenseModel.updateOne({ ExpenseId: options.ExpenseId }, {
+            let update = {
                 $set: {
                     createdBy: options.createdBy,
                     paidBy: options.paidBy,
                     amount: options.amount,
                     modifiedOn: time.now(),
+                },
+                $push:{
+                    members:options.paidBy
                 }
-            })
+            }
+            console.log(req.body.ExpenseId)
+            console.log('paidby'+options.paidBy)
+            ExpenseModel.updateOne({ ExpenseId: options.ExpenseId },update )
             .exec((err, result) => {
                 if (err) {
                     logger.error(err.message, 'ExpenseController: editExpense', 10)
@@ -140,7 +142,7 @@ let editExpense = (req, res) => {
                     let apiResponse = response.generate(true, 'No Expenses Found', 404, null)
                     res.send(apiResponse)
                 } else {
-                    console.log(result)
+                    logger.info('Expense edited successfully','ExpenseController:editExpense.editBody',10)
                     resolve(result)
                 }
             })
@@ -158,7 +160,8 @@ let editExpense = (req, res) => {
                     console.log(x)
                     ExpenseModel.updateOne({ ExpenseId: req.body.ExpenseId }, {
                         $push: {
-                            debtors: { email: x.email, paid: x.paid }
+                            debtors: { email: x.email, paid: x.paid },
+                            members:x.email
                         }
                     }, (err, result) => {
                         if (err) {
@@ -167,22 +170,55 @@ let editExpense = (req, res) => {
                             let apiResponse = response.generate(true, 'Failed to create & save new Expense', 500, null)
                             reject(apiResponse)
                         } else {
-                            // emitting edited Expense for notification
-                            eventEmitter.emit("Expense-edited", req.params.id);
                             resolve(result)
                         }
                     })
                 }
             }else{
-                resolve(arrayDebtors)
+                logger.info('Expense edited successfully','ExpenseController:editExpense',10)
+                resolve("body edited successfully")
             }  
 
         })
     }
 
+    let removeMembers = () => {
+        return new Promise((resolve,reject)=>{
+            let removeArray = JSON.parse(req.body.removeMembers)
+            console.log(removeArray)
+            if(!check.isEmpty(removeArray)){
+                for ( let x of removeArray){
+                    let update = {
+                        $pull:{
+                            debtors:{email:x},
+                            members:x
+                        }
+                    }
+                    ExpenseModel.updateOne({ExpenseId:req.body.ExpenseId},update, (err,result)=>{
+                        if(err){
+                            console.log(err)
+                            logger.error(err.message, 'ExpenseController: editExpense:removeMembers', 10)
+                            let apiResponse = response.generate(true, 'Failed to create & save new Expense', 500, null)
+                            reject(apiResponse)
+                        }else{
+                            resolve(result)
+                        }
+                    })
+                }
+            }else{
+                logger.info('Expense edited successfully','ExpenseController:removeMembers',10)
+                resolve("no members removed")
+            }
+        })
+    }
+
     editBody(req,res)
         .then(addDebtors)
+        .then(removeMembers)
         .then((resolve)=>{
+            // emitting edited Expense for notification
+            eventEmitter.emit("Expense-edited", req.params.id);
+            console.log(resolve)
             let apiResponse = response.generate(false, 'new Expense edited successfully', 200, resolve)
             res.send(apiResponse)
         }).catch((err)=>{
@@ -262,7 +298,7 @@ let getAllExpense = (req, res) => {
 
 let getExpenseOfAUser = (req, res) => {
 
-    ExpenseModel.find({ $or: [{ paidBy: req.params.email }, { debtors: req.params.email }, { createdBy: req.params.email }] })
+    ExpenseModel.find({ $or: [{ members: req.params.email }, { createdBy: req.params.email }] })
         .select('-__v -_id')
         .sort('-modifiedOn')
         .exec((err, result) => {

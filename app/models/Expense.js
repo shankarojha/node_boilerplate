@@ -20,7 +20,9 @@ let expenseSchema = new mongoose.Schema({
     },
 
     debtors: [{email:String,
-    paid:Number
+    paid:{type:Number,
+        default:0
+    }
     }],
 
     amount:{
@@ -35,7 +37,11 @@ let expenseSchema = new mongoose.Schema({
     modifiedOn:{
         type:Date,
         default:Date.now()
-    }
+    },
+
+    members:[]
+        
+    
 })
 
 module.exports = mongoose.model('Expense',expenseSchema)
