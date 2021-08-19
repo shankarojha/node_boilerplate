@@ -4,9 +4,8 @@ let expenseSchema = new mongoose.Schema({
 
     ExpenseId:{
         type:String,
-        default:'',
-        index:true,
-        unique:true
+        unique:true,
+        index:true
     },
 
     createdBy:{
@@ -39,7 +38,7 @@ let expenseSchema = new mongoose.Schema({
         default:Date.now()
     },
 
-    members:[]
+    member:[]
         
     
 })
