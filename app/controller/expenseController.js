@@ -185,7 +185,6 @@ let editExpense = (req, res) => {
     let removeMembers = () => {
         return new Promise((resolve,reject)=>{
             let removeArray = JSON.parse(req.body.removeMembers)
-            console.log(removeArray)
             if(!check.isEmpty(removeArray)){
                 for ( let x of removeArray){
                     let update = {
@@ -196,17 +195,17 @@ let editExpense = (req, res) => {
                     }
                     ExpenseModel.updateOne({ExpenseId:req.body.ExpenseId},update, (err,result)=>{
                         if(err){
-                            console.log(err)
                             logger.error(err.message, 'ExpenseController: editExpense:removeMembers', 10)
                             let apiResponse = response.generate(true, 'Failed to create & save new Expense', 500, null)
                             reject(apiResponse)
                         }else{
+                            logger.info('Expense edited successfully','ExpenseController:removeMembers',10)
                             resolve(result)
                         }
                     })
                 }
             }else{
-                logger.info('Expense edited successfully','ExpenseController:removeMembers',10)
+                logger.info('Expense edited successfully no members were removed','ExpenseController:removeMembers',10)
                 resolve("no members removed")
             }
         })
