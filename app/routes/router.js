@@ -26,4 +26,6 @@ module.exports.setRouter = (app) => {
     app.get(`/getexpenseofuser/:email`, expenseController.getExpenseOfAUser)
 
     app.get(`/getexpense/:ExpenseId`, expenseController.getSingleExpenseDetails)
+
+    app.post('/updatePaymentInfo', expenseController.updatePaymentInfo)
 }

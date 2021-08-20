@@ -165,7 +165,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                     } else if (check.isEmpty(result)) {
                         let newNotification = new NotificationModel({
                             email: x,
-                            message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                            message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                         })
 
                         newNotification.save((err, result) => {
@@ -181,7 +181,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                                     from: 'splitexpensepro@gmail.com',
                                     to: x,
                                     subject: 'New Expense Added',
-                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                                   };
                               
                                   transporter.sendMail(mailOptions, function (error, result) {
@@ -208,7 +208,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                     } else {
                         NotificationModel.updateOne({ email: x }, {
                             $push: {
-                                message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                                message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                             }
                         }, (err, result) => {
                             if (err) {
@@ -224,7 +224,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                                     from: 'splitexpensepro@gmail.com',
                                     to: x,
                                     subject: 'New Expense Added',
-                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                                   };
                               
                                   transporter.sendMail(mailOptions, function (error, result) {

@@ -156,8 +156,8 @@ let editExpense = (req, res) => {
                     } else {
                         logger.info('Expense edited successfully', 'ExpenseController:editExpense.editBody', 10)
                         let resolveInfo = {
-                            ExpenseId:options.ExpenseId,
-                            userEmail:options.userEmail
+                            ExpenseId: options.ExpenseId,
+                            userEmail: options.userEmail
                         }
                         resolve(resolveInfo)
                     }
@@ -173,7 +173,7 @@ let editExpense = (req, res) => {
                 console.log('array debtors' + arrayDebtors)
                 let count = 0
                 let len = arrayDebtors.length
-                console.log('len'+len)
+                console.log('len' + len)
                 for (let x of arrayDebtors) {
                     console.log(req.body.ExpenseId)
                     console.log(x)
@@ -190,9 +190,9 @@ let editExpense = (req, res) => {
                             reject(apiResponse)
                         } else {
                             count++
-                            if(count === len){
+                            if (count === len) {
                                 resolve(resolveInfo)
-                            } 
+                            }
                         }
                     })
                 }
@@ -225,7 +225,7 @@ let editExpense = (req, res) => {
                         } else {
                             count++
                             logger.info('Expense edited successfully', 'ExpenseController:removemember', 10)
-                            if(count===len){
+                            if (count === len) {
                                 resolve(resolveInfo)
                             }
                         }
@@ -256,7 +256,7 @@ let editExpense = (req, res) => {
 /** Handle event emitted on editExpense() */
 
 eventEmitter.on("Expense-edited", (resolveInfo) => {
-    console.log('eON' + resolveInfo.ExpenseId+resolveInfo.userEmail)
+    console.log('eON' + resolveInfo.ExpenseId + resolveInfo.userEmail)
     ExpenseModel.findOne({ 'ExpenseId': resolveInfo.ExpenseId }, (err, result) => {
         if (err) {
             logger.error(err.message, 'ExpenseController: getSingleExpenseDetails', 10)
@@ -268,14 +268,76 @@ eventEmitter.on("Expense-edited", (resolveInfo) => {
             logger.info('Expense found', 'ExpenseController: getSingleExpenseDetails');
             console.log(result.member)
             let notificationObj = {
-                result:result,
-                userEmail:resolveInfo.userEmail
+                result: result,
+                userEmail: resolveInfo.userEmail
             }
-            console.log('Noti obj'+notificationObj)
+            console.log('Noti obj' + notificationObj)
             notificationController.notifyOnExpenseEdit(notificationObj)
         }
     })
 })
+
+/** UPDATE PAYMENT INFO */
+
+let updatePaymentInfo = (req, res) => {
+    console.log(req.body.email)
+    console.log(req.body.paid)
+    console.log(req.body.ExpenseId)
+    console.log(req.body.userEmail)
+
+    let removePaid = () => {
+        return new Promise((resolve, reject) => {
+            let update = {
+                $pull: {
+                    debtors: { email: req.body.email }
+                }
+            }
+            ExpenseModel.updateOne({ ExpenseId: req.body.ExpenseId }, update, (err, result) => {
+                if (err) {
+                    logger.error(err, 'updatePaymentInfo:removePaid', 10)
+                    reject(err)
+                } else {
+                    logger.info(result, 'updatePaymentInfo:removePaid', 10)
+                    resolve(req)
+                }
+            })
+        })
+    }
+    let addPaid = (req) => {
+        return new Promise((resolve, reject) => {
+            let update = {
+                $set:{
+                    modifiedOn:time.now()
+                },
+                $push: {
+                    debtors: { email: req.body.email, paid: req.body.paid }
+                }
+            }
+            ExpenseModel.updateOne({ ExpenseId: req.body.ExpenseId }, update, (err, result) => {
+                if (err) {
+                    logger.error(err, 'updatePaymentInfo:addPaid', 10)
+                    reject(err)
+                } else {
+                    logger.info(result + 'updated successfully', 'updatePaymentInfo:addPaid', 10)
+                    let eventInfo = {
+                        ExpenseId: req.body.ExpenseId,
+                        userEmail: req.body.userEmail
+                    }
+                    resolve(eventInfo)
+                    eventEmitter.emit("Expense-edited", eventInfo);
+                }
+            })
+        })
+    }
+
+    removePaid(req, res)
+        .then(addPaid)
+        .then((resolve) => {
+            let apiResponse = response.generate(false, 'Expense updated successfully', 200, resolve)
+            eventEmitter.emit("Expense-edited", resolve);
+            res.send(apiResponse)
+        })
+}
 
 /** DELETE EXPENSE */
 
@@ -375,6 +437,7 @@ module.exports = {
     deleteExpense: deleteExpense,
     getAllExpense: getAllExpense,
     getExpenseOfAUser: getExpenseOfAUser,
-    getSingleExpenseDetails: getSingleExpenseDetails
+    getSingleExpenseDetails: getSingleExpenseDetails,
+    updatePaymentInfo: updatePaymentInfo
 }
 
