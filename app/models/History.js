@@ -6,7 +6,7 @@ let historySchema = new mongoose.Schema({
         type:String
     },
 
-    historyMessage: Object
+    message: []
 })
 
 module.exports = mongoose.model('History', historySchema)

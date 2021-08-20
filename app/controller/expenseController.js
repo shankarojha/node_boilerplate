@@ -155,20 +155,25 @@ let editExpense = (req, res) => {
                         res.send(apiResponse)
                     } else {
                         logger.info('Expense edited successfully', 'ExpenseController:editExpense.editBody', 10)
-                        resolve(options.ExpenseId)
+                        let resolveInfo = {
+                            ExpenseId:options.ExpenseId,
+                            userEmail:options.userEmail
+                        }
+                        resolve(resolveInfo)
                     }
                 })
         })
     }
 
 
-    let addDebtors = (ExpenseId) => {
+    let addDebtors = (resolveInfo) => {
         return new Promise((resolve, reject) => {
             let arrayDebtors = JSON.parse((req.body.debtors))
             if (!check.isEmpty(arrayDebtors)) {
                 console.log('array debtors' + arrayDebtors)
                 let count = 0
                 let len = arrayDebtors.length
+                console.log('len'+len)
                 for (let x of arrayDebtors) {
                     console.log(req.body.ExpenseId)
                     console.log(x)
@@ -186,22 +191,22 @@ let editExpense = (req, res) => {
                         } else {
                             count++
                             if(count === len){
-                                resolve(ExpenseId)
-                            }
+                                resolve(resolveInfo)
+                            } 
                         }
                     })
                 }
             } else {
                 logger.info('Expense edited successfully', 'ExpenseController:editExpense', 10)
-                resolve(ExpenseId)
+                resolve(resolveInfo)
             }
 
         })
     }
 
-    let removemember = (ExpenseId) => {
+    let removemember = (resolveInfo) => {
         return new Promise((resolve, reject) => {
-            let removeArray = JSON.parse(req.body.removemember)
+            let removeArray = JSON.parse(req.body.removeMembers)
             if (!check.isEmpty(removeArray)) {
                 let count = 0
                 let len = removeArray.length
@@ -221,14 +226,14 @@ let editExpense = (req, res) => {
                             count++
                             logger.info('Expense edited successfully', 'ExpenseController:removemember', 10)
                             if(count===len){
-                                resolve(ExpenseId)
+                                resolve(resolveInfo)
                             }
                         }
                     })
                 }
             } else {
                 logger.info('Expense edited successfully no member were removed', 'ExpenseController:removemember', 10)
-                resolve(ExpenseId)
+                resolve(resolveInfo)
             }
         })
     }
@@ -237,11 +242,11 @@ let editExpense = (req, res) => {
         .then(addDebtors)
         .then(removemember)
         .then((resolve) => {
-            // emitting edited Expense for notification
-            eventEmitter.emit("Expense-edited", resolve);
             console.log(resolve)
             let apiResponse = response.generate(false, 'new Expense edited successfully', 200, resolve)
             res.send(apiResponse)
+            // emitting edited Expense for notification
+            eventEmitter.emit("Expense-edited", resolve);
         }).catch((err) => {
             res.send(err);
         })
@@ -250,27 +255,27 @@ let editExpense = (req, res) => {
 
 /** Handle event emitted on editExpense() */
 
-/** eventEmitter.on("Expense-edited", (ExpenseData) => {
+eventEmitter.on("Expense-edited", (resolveInfo) => {
+    console.log('eON' + resolveInfo.ExpenseId+resolveInfo.userEmail)
+    ExpenseModel.findOne({ 'ExpenseId': resolveInfo.ExpenseId }, (err, result) => {
+        if (err) {
+            logger.error(err.message, 'ExpenseController: getSingleExpenseDetails', 10)
 
-    ExpenseModel.findOne({ 'id': ExpenseData })
-        .select('-__v -_id')
-        .exec((err, result) => {
-            if (err) {
-                console.log(err);
-                logger.error(err.message, 'ExpenseController: eventEmitter.on-> new Expense created', 10)
+        } else if (check.isEmpty(result)) {
+            logger.info('No Expense found', 'ExpenseController: getSingleExpenseDetails')
 
-            } else if (check.isEmpty(result)) {
-                logger.info('No Expense found', 'ExpenseController: eventEmitter.on-> new Expense created')
-
-            } else {
-                logger.info('Expense found', 'ExpenseController: eventEmitter.on-> new Expense created');
-
-                notificationController.createANewNotificationObjOnEdit(result);
+        } else {
+            logger.info('Expense found', 'ExpenseController: getSingleExpenseDetails');
+            console.log(result.member)
+            let notificationObj = {
+                result:result,
+                userEmail:resolveInfo.userEmail
             }
-        })
-
-
-}) */
+            console.log('Noti obj'+notificationObj)
+            notificationController.notifyOnExpenseEdit(notificationObj)
+        }
+    })
+})
 
 /** DELETE EXPENSE */
 

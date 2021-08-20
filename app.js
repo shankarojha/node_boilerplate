@@ -45,6 +45,8 @@ fs.readdirSync(routesPath).forEach(function(file){
     }
 })
 
+
+
 /** call global not found handler after getting the routes */
 app.use(globalErrorHandler.globalNotFoundErrorHandler)
 
@@ -55,6 +57,11 @@ console.log(appConfig);
 server.listen(appConfig.port)
 server.on('error',onError)
 server.on('listening', onListening)
+
+/** INITIALIZE SOCKET.IO */
+
+const socketLib = require("./app/libs/socketLib");
+const socketServer = socketLib.setServer(server);
 
 function onError(error){
     if(error.syscall !== 'listen'){

@@ -73,7 +73,66 @@ let notifyOnNewExpense = (expenseData) => {
         })
 
     }
-    //findExpense(expenseId)
+    newNotificationOnExpenseCreation(expenseData)
+    .then((resolve)=>{
+        logger.info(resolve, 'notification-controller:notifyOnNewExpense',10)
+    }).catch((err)=>{
+        logger.error(err, 'notification-controller:notifyOnNewExpense',10)
+    })
+
+}
+
+/** CREATE NEW NOTIFICATION ON EDIT EXPENSE */
+
+let notifyOnExpenseEdit = (expenseData) => {
+    let newNotificationOnExpenseCreation = () => {
+        return new Promise((resolve, reject) => {
+            console.log('notification member:  => '+ expenseData.result.member)
+            let uniqueMemberArray = getUnique(expenseData.result.member)
+            for (let x of uniqueMemberArray) {
+                console.log('x:'+x)
+                NotificationModel.findOne({ email: x }, (err, result) => {
+                    if (err) {
+                        logger.error(err, 'Notification Controller : newNotificationOnExpenseCreation', 10)
+                        reject(err)
+                    } else if (check.isEmpty(result)) {
+                        let newNotification = new NotificationModel({
+                            email: x,
+                            message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                        })
+
+                        newNotification.save((err, result) => {
+                            if (err) {
+                                logger.error(err.message, 'ExpenseController: createExpense', 10)
+                            }
+                            else {
+                                console.log(result)
+                                logger.info('notification saved', 'Notification Controller : newNotificationOnExpenseCreation', 10)
+                                resolve(result)
+                            }
+                        })
+                    } else {
+                        NotificationModel.updateOne({ email: x }, {
+                            $set: {
+                                message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                            }
+                        }, (err, result) => {
+                            if (err) {
+                                logger.error(err.message, 'ExpenseController: createExpense', 10)
+                                reject(err)
+                            }
+                            else {
+                                logger.info('notification saved and updated', 'Notification Controller : newNotificationOnExpenseCreation', 10)
+                                console.log('Notification edit result' + result)
+                                resolve(result)
+                            }
+                        })
+                    }
+                })
+            }
+        })
+
+    }
     newNotificationOnExpenseCreation(expenseData)
     .then((resolve)=>{
         logger.info(resolve, 'notification-controller:notifyOnNewExpense',10)
@@ -86,7 +145,8 @@ let notifyOnNewExpense = (expenseData) => {
 
 
 module.exports = {
-    notifyOnNewExpense: notifyOnNewExpense
+    notifyOnNewExpense: notifyOnNewExpense,
+    notifyOnExpenseEdit:notifyOnExpenseEdit
 }
 
 
