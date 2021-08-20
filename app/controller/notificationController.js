@@ -3,11 +3,9 @@ const logger = require('../libs/loggerLib')
 const response = require('../libs/responseLib')
 const check = require('../libs/checkLib')
 const events = require('events')
+const nodemailer = require('nodemailer')
 /** MODELS */
 const NotificationModel = mongoose.model('Notification')
-const ExpenseModel = mongoose.model('Expense')
-const UserModel = mongoose.model('User')
-const HistoryModel = mongoose.model('History')
 
 /** GET UNIQUE ARRAY */
 
@@ -23,12 +21,24 @@ function getUnique(array) {
     return uniqueArray;
 }
 
+/** SETUP NODE-MAILER */
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'splitexpensepro@gmail.com',
+      pass: 'shan2895kar'
+    }
+  });
 
 /** CREATE NEW NOTIFICATION ON NEW EXPENSE */
 let notifyOnNewExpense = (expenseData) => {
     let newNotificationOnExpenseCreation = () => {
         return new Promise((resolve, reject) => {
             console.log('notification member:  => '+ expenseData.member)
+            let uniqueMemberArray = getUnique(expenseData.member)
+            let count = 0
+            let len = uniqueMemberArray.length
             for (let x of expenseData.member) {
                 console.log('x:'+x)
                 NotificationModel.findOne({ email: x }, (err, result) => {
@@ -48,7 +58,34 @@ let notifyOnNewExpense = (expenseData) => {
                             else {
                                 console.log(result)
                                 logger.info('notification saved', 'Notification Controller : newNotificationOnExpenseCreation', 10)
-                                resolve(result)
+
+                                /** SEND MAIL */
+                                let mailOptions = {
+                                    from: 'splitexpensepro@gmail.com',
+                                    to: x,
+                                    subject: 'New Expense Added',
+                                    text: `New expense added by ${expenseData.createdBy} on ${expenseData.createdOn}`
+                                  };
+                              
+                                  transporter.sendMail(mailOptions, function (error, result) {
+                                    if (error) {
+                                      console.log(error);
+                                      logger.error(
+                                        error,
+                                        "UserController: forgotpassword sendmail",
+                                        10
+                                      );
+                                    } else {
+                                      console.log('mailsent to: ' + result.response)
+                                    }
+                                  });
+                                /**SEND MAIL END */
+                                count ++
+
+                                if(count===len){
+                                    resolve(result)
+                                }
+                                
                             }
                         })
                     } else {
@@ -64,7 +101,34 @@ let notifyOnNewExpense = (expenseData) => {
                             else {
                                 logger.info('notification saved and updated', 'Notification Controller : newNotificationOnExpenseCreation', 10)
                                 console.log('Notification edit result' + result)
-                                resolve(result)
+
+                                /** SEND MAIL */
+                                let mailOptions = {
+                                    from: 'splitexpensepro@gmail.com',
+                                    to: x,
+                                    subject: 'New Expense Added',
+                                    text: `New expense added by ${expenseData.createdBy} on ${expenseData.createdOn}`
+                                  };
+                              
+                                  transporter.sendMail(mailOptions, function (error, result) {
+                                    if (error) {
+                                      console.log(error);
+                                      logger.error(
+                                        error,
+                                        "UserController: forgotpassword sendmail",
+                                        10
+                                      );
+                                    } else {
+                                      console.log('mailsent to: ' + result.response)
+                                    }
+                                  });
+                                /**SEND MAIL END */
+
+                                count ++
+                                
+                                if(count===len){
+                                    resolve(result)
+                                }
                             }
                         })
                     }
@@ -89,6 +153,9 @@ let notifyOnExpenseEdit = (expenseData) => {
         return new Promise((resolve, reject) => {
             console.log('notification member:  => '+ expenseData.result.member)
             let uniqueMemberArray = getUnique(expenseData.result.member)
+
+            let count = 0
+            let len = uniqueMemberArray.length
             for (let x of uniqueMemberArray) {
                 console.log('x:'+x)
                 NotificationModel.findOne({ email: x }, (err, result) => {
@@ -108,12 +175,39 @@ let notifyOnExpenseEdit = (expenseData) => {
                             else {
                                 console.log(result)
                                 logger.info('notification saved', 'Notification Controller : newNotificationOnExpenseCreation', 10)
-                                resolve(result)
+
+                                /** SEND MAIL */
+                                let mailOptions = {
+                                    from: 'splitexpensepro@gmail.com',
+                                    to: x,
+                                    subject: 'New Expense Added',
+                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                                  };
+                              
+                                  transporter.sendMail(mailOptions, function (error, result) {
+                                    if (error) {
+                                      console.log(error);
+                                      logger.error(
+                                        error,
+                                        "UserController: forgotpassword sendmail",
+                                        10
+                                      );
+                                    } else {
+                                      console.log('mailsent to: ' + result.response)
+                                    }
+                                  });
+                                /**SEND MAIL END */
+                                count++
+
+                                if(count === len){
+                                    resolve(result)
+                                }
+                                
                             }
                         })
                     } else {
                         NotificationModel.updateOne({ email: x }, {
-                            $set: {
+                            $push: {
                                 message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
                             }
                         }, (err, result) => {
@@ -124,7 +218,32 @@ let notifyOnExpenseEdit = (expenseData) => {
                             else {
                                 logger.info('notification saved and updated', 'Notification Controller : newNotificationOnExpenseCreation', 10)
                                 console.log('Notification edit result' + result)
-                                resolve(result)
+
+                                /** SEND MAIL */
+                                let mailOptions = {
+                                    from: 'splitexpensepro@gmail.com',
+                                    to: x,
+                                    subject: 'New Expense Added',
+                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.createdOn}`
+                                  };
+                              
+                                  transporter.sendMail(mailOptions, function (error, result) {
+                                    if (error) {
+                                      console.log(error);
+                                      logger.error(
+                                        error,
+                                        "UserController: forgotpassword sendmail",
+                                        10
+                                      );
+                                    } else {
+                                      console.log('mailsent to: ' + result.response)
+                                    }
+                                  });
+                                /**SEND MAIL END */
+
+                                if(count === len){
+                                    resolve(result)
+                                }
                             }
                         })
                     }

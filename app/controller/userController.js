@@ -567,49 +567,49 @@ let forgotPassword = (req, res) => {
       let userId = apiResponse.userDetails.userId;
       let authToken = apiResponse.authToken;
       let response = {
-        link : `http://localhost:4200/resetpassword/${userId}?authToken=${authToken}`,
+        link: `http://localhost:4200/resetpassword/${userId}?authToken=${authToken}`,
         userEmail: apiResponse.userDetails.email
       }
-      
+
       console.log(response);
       resolve(response);
     });
   };
 
-  let sendmailLink = (response) =>{
+  let sendmailLink = (response) => {
 
     /** nodemailer test */
 
-let transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'splitexpensepro@gmail.com',
-    pass: 'shan2895kar'
-  }
-});
-console.log(response.userEmail)
-let mailOptions = {
-  from: 'splitexpensepro@gmail.com',
-  to: response.userEmail,
-  subject: 'Reset password link',
-  text: response.link
-};
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'splitexpensepro@gmail.com',
+        pass: 'shan2895kar'
+      }
+    });
+    console.log(response.userEmail)
+    let mailOptions = {
+      from: 'splitexpensepro@gmail.com',
+      to: response.userEmail,
+      subject: 'Reset password link',
+      text: response.link
+    };
 
-transporter.sendMail(mailOptions, function(error, result){
-  if (error) {
-    console.log(error);
-    logger.error(
-      err.message,
-      "UserController: forgotpassword sendmail",
-      10
-    );
-  } else {
-    console.log('mailsent to: '+ result.response)
-    resolve(result)
-  }
-});
+    transporter.sendMail(mailOptions, function (error, result) {
+      if (error) {
+        console.log(error);
+        logger.error(
+          error,
+          "UserController: forgotpassword sendmail",
+          10
+        );
+      } else {
+        console.log('mailsent to: ' + result.response)
+        resolve(result)
+      }
+    });
 
-/** nodemailer test end */
+    /** nodemailer test end */
   }
 
   findUser(req, res)
@@ -683,6 +683,6 @@ module.exports = {
   logout: logout,
   getAllUsers: getAllUsers,
   getSingleUser: getSingleUser,
-  forgotPassword:forgotPassword,
-  resetPassword:resetPassword
+  forgotPassword: forgotPassword,
+  resetPassword: resetPassword
 };
