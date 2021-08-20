@@ -8,6 +8,7 @@ const time = require("../libs/timeLib");
 const events = require('events');
 const eventEmitter = new events.EventEmitter();
 const notificationController = require('../controller/notificationController')
+const historyController = require('../controller/historyController')
 /** Models */
 const UserModel = mongoose.model("User");
 const ExpenseModel = mongoose.model("Expense")
@@ -157,7 +158,8 @@ let editExpense = (req, res) => {
                         logger.info('Expense edited successfully', 'ExpenseController:editExpense.editBody', 10)
                         let resolveInfo = {
                             ExpenseId: options.ExpenseId,
-                            userEmail: options.userEmail
+                            userEmail: options.userEmail,
+                            updateHistory:false
                         }
                         resolve(resolveInfo)
                     }
@@ -269,10 +271,17 @@ eventEmitter.on("Expense-edited", (resolveInfo) => {
             console.log(result.member)
             let notificationObj = {
                 result: result,
-                userEmail: resolveInfo.userEmail
+                userEmail: resolveInfo.userEmail,
+                emailEdited:resolveInfo.emailEdited,
+                paid:resolveInfo.paid
             }
             console.log('Noti obj' + notificationObj)
             notificationController.notifyOnExpenseEdit(notificationObj)
+            if(resolveInfo.updateHistory === true){
+                historyController.createHistoryOnUpdate(notificationObj)
+            }else{
+                historyController.createHistoryOnEdit(notificationObj)
+            }
         }
     })
 })
@@ -321,10 +330,12 @@ let updatePaymentInfo = (req, res) => {
                     logger.info(result + 'updated successfully', 'updatePaymentInfo:addPaid', 10)
                     let eventInfo = {
                         ExpenseId: req.body.ExpenseId,
-                        userEmail: req.body.userEmail
+                        userEmail: req.body.userEmail,
+                        emailEdited:req.body.email,
+                        paid:req.body.paid,
+                        updateHistory:true
                     }
                     resolve(eventInfo)
-                    eventEmitter.emit("Expense-edited", eventInfo);
                 }
             })
         })

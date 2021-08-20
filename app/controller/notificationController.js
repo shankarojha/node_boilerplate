@@ -72,7 +72,7 @@ let notifyOnNewExpense = (expenseData) => {
                                       console.log(error);
                                       logger.error(
                                         error,
-                                        "UserController: forgotpassword sendmail",
+                                        "NotificationController:send mail",
                                         10
                                       );
                                     } else {
@@ -115,7 +115,7 @@ let notifyOnNewExpense = (expenseData) => {
                                       console.log(error);
                                       logger.error(
                                         error,
-                                        "UserController: forgotpassword sendmail",
+                                        "NotificationController:send mail",
                                         10
                                       );
                                     } else {
@@ -189,7 +189,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                                       console.log(error);
                                       logger.error(
                                         error,
-                                        "UserController: forgotpassword sendmail",
+                                        "NotificationController:send mail",
                                         10
                                       );
                                     } else {
@@ -232,7 +232,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                                       console.log(error);
                                       logger.error(
                                         error,
-                                        "UserController: forgotpassword sendmail",
+                                        "NotificationController:send mail",
                                         10
                                       );
                                     } else {

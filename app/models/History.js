@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 let historySchema = new mongoose.Schema({
 
-    id:{
+    ExpenseId:{
         type:String
     },
 
