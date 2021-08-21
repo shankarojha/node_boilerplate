@@ -48,7 +48,7 @@ let notifyOnNewExpense = (expenseData) => {
                     } else if (check.isEmpty(result)) {
                         let newNotification = new NotificationModel({
                             email: x,
-                            message: `New expense added by ${expenseData.createdBy} on ${expenseData.createdOn}`
+                            message: `New expense : ${expenseData.ExpenseName} added by ${expenseData.createdBy} on ${expenseData.createdOn}`
                         })
 
                         newNotification.save((err, result) => {
@@ -64,7 +64,7 @@ let notifyOnNewExpense = (expenseData) => {
                                     from: 'splitexpensepro@gmail.com',
                                     to: x,
                                     subject: 'New Expense Added',
-                                    text: `New expense added by ${expenseData.createdBy} on ${expenseData.createdOn}`
+                                    text: `New expense : ${expenseData.ExpenseName} added by ${expenseData.createdBy} on ${expenseData.createdOn}`
                                   };
                               
                                   transporter.sendMail(mailOptions, function (error, result) {
@@ -91,7 +91,7 @@ let notifyOnNewExpense = (expenseData) => {
                     } else {
                         NotificationModel.updateOne({ email: x }, {
                             $push: {
-                                message: `New expense added by ${expenseData.createdBy} on ${expenseData.createdOn}`
+                                message: `New expense : ${expenseData.ExpenseName} added by ${expenseData.createdBy} on ${expenseData.createdOn}`
                             }
                         }, (err, result) => {
                             if (err) {
@@ -107,7 +107,7 @@ let notifyOnNewExpense = (expenseData) => {
                                     from: 'splitexpensepro@gmail.com',
                                     to: x,
                                     subject: 'New Expense Added',
-                                    text: `New expense added by ${expenseData.createdBy} on ${expenseData.createdOn}`
+                                    text: `New expense : ${expenseData.ExpenseName} added by ${expenseData.createdBy} on ${expenseData.createdOn}`
                                   };
                               
                                   transporter.sendMail(mailOptions, function (error, result) {
@@ -165,12 +165,12 @@ let notifyOnExpenseEdit = (expenseData) => {
                     } else if (check.isEmpty(result)) {
                         let newNotification = new NotificationModel({
                             email: x,
-                            message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
+                            message: `Expense: ${expenseData.result.ExpenseName} with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                         })
 
                         newNotification.save((err, result) => {
                             if (err) {
-                                logger.error(err.message, 'ExpenseController: createExpense', 10)
+                                logger.error(err, 'ExpenseController: createExpense', 10)
                             }
                             else {
                                 console.log(result)
@@ -181,7 +181,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                                     from: 'splitexpensepro@gmail.com',
                                     to: x,
                                     subject: 'New Expense Added',
-                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
+                                    text: `Expense: ${expenseData.result.ExpenseName} with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                                   };
                               
                                   transporter.sendMail(mailOptions, function (error, result) {
@@ -208,11 +208,11 @@ let notifyOnExpenseEdit = (expenseData) => {
                     } else {
                         NotificationModel.updateOne({ email: x }, {
                             $push: {
-                                message: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
+                                message: `Expense: ${expenseData.result.ExpenseName} with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                             }
                         }, (err, result) => {
                             if (err) {
-                                logger.error(err.message, 'ExpenseController: createExpense', 10)
+                                logger.error(err, 'ExpenseController: createExpense', 10)
                                 reject(err)
                             }
                             else {
@@ -224,7 +224,7 @@ let notifyOnExpenseEdit = (expenseData) => {
                                     from: 'splitexpensepro@gmail.com',
                                     to: x,
                                     subject: 'New Expense Added',
-                                    text: `Expense with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
+                                    text: `Expense: ${expenseData.result.ExpenseName} with ExpenseId : ${expenseData.result.ExpenseId} edited by ${expenseData.userEmail} on ${expenseData.result.modifiedOn}`
                                   };
                               
                                   transporter.sendMail(mailOptions, function (error, result) {

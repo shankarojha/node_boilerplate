@@ -8,6 +8,11 @@ let expenseSchema = new mongoose.Schema({
         index:true
     },
 
+    ExpenseName:{
+        type:String,
+        default:'Expense'
+    },
+
     createdBy:{
         type:String,
         required:true

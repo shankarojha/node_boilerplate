@@ -7,6 +7,7 @@ const eventEmitter = new events.EventEmitter()
 
 /** MODELS */
 const NotificationModel = mongoose.model('Notification')
+const HistoryModel = mongoose.model('History')
 
 /** SET SERVER */
 
@@ -17,6 +18,9 @@ let server = (server) => {
     let myIo = io.of('/')
 
     myIo.on('connection', (socket) => {
+
+        /** NOTIFICATION SOCKET */
+        
         socket.on('sendNotification', (userEmail) => {
             console.log('sendNotification to :'+ userEmail)
             findAndSendNotification()
@@ -67,6 +71,27 @@ let server = (server) => {
                     })
             }
         })
+
+        /** HISTORY SOCKET */
+
+        socket.on('sendHistory', (ExpenseId)=>{
+            console.log('send History for:'+ ExpenseId)
+            findAndSendHistory()
+
+            let findAndSendHistory = (ExpenseId) => {
+                HistoryModel.findOne({ExpenseId:ExpenseId})
+                .select("message")
+                .exec((err,result)=>{
+                    if(err){
+                        logger.error(err, 'Send History:SocketLib',10)
+                    }else{
+                        logger.info('history sent', 'Send History:SocketLib',10)
+                        socket.emit('yourHistory',result)
+                    }
+                })
+            }
+        })
+
     })
 }
 

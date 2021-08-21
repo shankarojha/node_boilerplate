@@ -27,5 +27,5 @@ module.exports.setRouter = (app) => {
 
     app.get(`/getexpense/:ExpenseId`, expenseController.getSingleExpenseDetails)
 
-    app.post('/updatePaymentInfo', expenseController.updatePaymentInfo)
+    app.post('/updatepaymentInfo', expenseController.updatePaymentInfo)
 }

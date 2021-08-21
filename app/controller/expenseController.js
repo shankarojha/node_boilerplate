@@ -37,6 +37,7 @@ let createNewExpense = (req, res) => {
             let newExpense = new ExpenseModel({
 
                 ExpenseId: shortid.generate(),
+                ExpenseName:req.body.ExpenseName,
                 createdBy: req.body.createdBy,
                 paidBy: req.body.paidBy,
                 member: req.body.paidBy,
@@ -258,7 +259,6 @@ let editExpense = (req, res) => {
 /** Handle event emitted on editExpense() */
 
 eventEmitter.on("Expense-edited", (resolveInfo) => {
-    console.log('eON' + resolveInfo.ExpenseId + resolveInfo.userEmail)
     ExpenseModel.findOne({ 'ExpenseId': resolveInfo.ExpenseId }, (err, result) => {
         if (err) {
             logger.error(err.message, 'ExpenseController: getSingleExpenseDetails', 10)
