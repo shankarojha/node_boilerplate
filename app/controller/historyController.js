@@ -32,7 +32,6 @@ let createHistoryOnEdit = (expenseData) => {
                     logger.error(err.message, 'ExpenseController: createExpense', 10)
                 }
                 else {
-                    console.log(result)
                     logger.info('History saved', 'History Controller : newHistoryOnExpenseCreation', 10)
                 }
             })
@@ -46,8 +45,7 @@ let createHistoryOnEdit = (expenseData) => {
                     logger.error(err.message, 'ExpenseController: createExpense', 10)
                 }
                 else {
-                    logger.info('History saved and updated', 'History Controller : newHistoryOnExpenseCreation', 10)
-                    console.log('History edit result' + result)   
+                    logger.info('History saved and updated', 'History Controller : newHistoryOnExpenseCreation', 10) 
                 }
             })
         }
@@ -68,7 +66,6 @@ let createHistoryOnUpdate = (expenseData) => {
                     logger.error(err.message, 'ExpenseController: createExpense', 10)
                 }
                 else {
-                    console.log(result)
                     logger.info('History saved', 'History Controller : newHistoryOnExpenseCreation', 10)
                 }
             })
@@ -83,7 +80,6 @@ let createHistoryOnUpdate = (expenseData) => {
                 }
                 else {
                     logger.info('History saved and updated', 'History Controller : newHistoryOnExpenseCreation', 10)
-                    console.log('History edit result' + result)   
                 }
             })
         }

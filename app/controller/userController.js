@@ -578,7 +578,7 @@ let forgotPassword = (req, res) => {
 
   let sendmailLink = (response) => {
 
-    /** nodemailer test */
+    /** nodemailer*/
 
     let transporter = nodemailer.createTransport({
       service: 'gmail',
