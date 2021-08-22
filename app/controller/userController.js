@@ -227,6 +227,7 @@ let loginFunction = (req, res) => {
         } else {
           tokenDetails.userId = userDetails.userId;
           tokenDetails.userDetails = userDetails;
+          console.log('test token details:'+tokenDetails)
           resolve(tokenDetails);
         }
       });
@@ -269,7 +270,7 @@ let loginFunction = (req, res) => {
               );
               let apiResponse = response.generate(
                 true,
-                "Failed To Generate Token",
+                "Failed To save Token",
                 500,
                 null
               );
@@ -284,7 +285,7 @@ let loginFunction = (req, res) => {
           });
         } else {
           // user already present so just update existing db
-          result.authToken = tokenDetails.authToken;
+          result.authToken = tokenDetails.token;
           result.tokenSecret = tokenDetails.tokenSecret;
           result.tokenGenerationTime = time.now();
           result.save((err, updateToken) => {
@@ -296,16 +297,17 @@ let loginFunction = (req, res) => {
               );
               let apiResponse = response.generate(
                 true,
-                "Failed To Generate Token",
+                "Failed To save Token",
                 500,
                 null
               );
               reject(apiResponse);
             } else {
-              response = {
-                authToken: updateToken.authToken,
+              let response = {
+                authToken: updateToken,
                 userDetails: tokenDetails.userDetails,
               };
+              console.log('tesrt auth:'+response.authToken)
               resolve(response);
             }
           });
@@ -327,10 +329,9 @@ let loginFunction = (req, res) => {
       );
       res.status(200);
       res.send(apiResponse);
-    })
-    .catch((error) => {
-      res.status(error.status).send(error);
-    });
+    }).catch((err) => {
+      res.status(err.status).send(err)
+  })
 };
 
 /** Logout Function */
@@ -567,7 +568,7 @@ let forgotPassword = (req, res) => {
       let userId = apiResponse.userDetails.userId;
       let authToken = apiResponse.authToken;
       let response = {
-        link: `http://localhost:4200/resetpassword/${userId}?authToken=${authToken}`,
+        link: `http://localhost:4200/user/resetpassword/${userId}?authToken=${authToken}`,
         userEmail: apiResponse.userDetails.email
       }
 
