@@ -17,15 +17,17 @@ module.exports.setRouter = (app) => {
 
     app.post(`/resetpassword`,authMiddleware.isAuthorized, userController.resetPassword)
 
-    app.post(`/createexpense`,expenseController.createNewExpense)
+    app.post(`/createexpense`,authMiddleware.isAuthorized,expenseController.createNewExpense)
 
-    app.post(`/editexpense`,expenseController.editExpense)
+    app.post(`/editexpense`,authMiddleware.isAuthorized,expenseController.editExpense)
 
-    app.post(`/deleteexpense/:ExpenseId`,authMiddleware.isAuthorized,expenseController.deleteExpense)
+    app.post(`/deleteexpense/:ExpenseId`,authMiddleware.isAuthorized,authMiddleware.isAuthorized,expenseController.deleteExpense)
 
-    app.get(`/getexpenseofuser/:email`, expenseController.getExpenseOfAUser)
+    app.get(`/getexpenseofuser/:email`,authMiddleware.isAuthorized, expenseController.getExpenseOfAUser)
 
-    app.get(`/getexpense/:ExpenseId`, expenseController.getSingleExpenseDetails)
+    app.get(`/getexpense/:ExpenseId`,authMiddleware.isAuthorized, expenseController.getSingleExpenseDetails)
 
-    app.post('/updatepaymentInfo', expenseController.updatePaymentInfo)
+    app.post('/updatepaymentInfo',authMiddleware.isAuthorized, expenseController.updatePaymentInfo)
+
+    app.post('/logout',authMiddleware.isAuthorized, userController.logout)
 }

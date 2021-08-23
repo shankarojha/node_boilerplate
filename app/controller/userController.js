@@ -122,8 +122,8 @@ let signupFunction = (req, res) => {
       );
       res.send(apiResponse);
     })
-    .catch((error) => {
-      res.send(error);
+    .catch((err) => {
+      res.send(err);
     });
 };
 
@@ -337,7 +337,7 @@ let loginFunction = (req, res) => {
 /** Logout Function */
 
 let logout = (req, res) => {
-  AuthModel.findOneAndRemove({ userId: req.user.userId }, (err, result) => {
+  AuthModel.findOneAndRemove({ userId: req.body.userId }, (err, result) => {
     if (err) {
       logger.error(err.message, "user Controller: logout", 10);
       let apiResponse = response.generate(

@@ -347,6 +347,9 @@ let updatePaymentInfo = (req, res) => {
             let apiResponse = response.generate(false, 'Expense updated successfully', 200, resolve)
             eventEmitter.emit("Expense-edited", resolve);
             res.send(apiResponse)
+        }).catch((err)=>{
+            let apiResponse = response.generate(true, 'Update failed', 500, err)
+            res.send(apiResponse)
         })
 }
 
@@ -397,7 +400,7 @@ let getAllExpense = (req, res) => {
 
 let getExpenseOfAUser = (req, res) => {
 
-    ExpenseModel.find({ $or: [{ member: req.params.email }, { createdBy: req.params.email }] })
+    ExpenseModel.find({ $or: [{ member: req.params.email }, { createdBy: req.params.email },{ paidBy: req.params.email }] })
         .select('-__v -_id')
         .sort('-modifiedOn')
         .exec((err, result) => {

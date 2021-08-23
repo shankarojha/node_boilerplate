@@ -23,7 +23,6 @@ let server = (server) => {
         
         socket.on('sendNotification', (userEmail) => {
             console.log('sendNotification to :'+ userEmail)
-            findAndSendNotification()
 
             let findAndSendNotification = (userEmail) => {
                 let findNotification = () => {
@@ -32,7 +31,7 @@ let server = (server) => {
                             if(err){
                                 logger.error(err,'socketLib:findNotification',10)
                                 reject(err)
-                            }else if(check.isEmpty(result.message)){
+                            }else if(check.isEmpty(result)){
                                 logger.info('no new notification','socketLib:findNotification',10)
                                 //socket.emit('no new notification')
                                 reject('no new notification')
@@ -44,9 +43,9 @@ let server = (server) => {
                     })
                 }
 
-                let removeSeenMessage = (notification) => {
+                let removeSeenMessage = () => {
                     return new Promise((resolve,reject)=> {
-                        NotificationModel.updateOne({email: notification.email},{
+                        NotificationModel.updateOne({email: userEmail},{
                             $set:{
                                 message:[]
                             }
@@ -56,27 +55,30 @@ let server = (server) => {
                                 reject(err)
                             }else{
                                 logger.info(result,'SocketLib:removeSeenMessage',10)
-                                resolve(notification)
+                                resolve(result)
                             }
                         })
                     })
                 }
 
                 findNotification(userEmail)
-                    .then(removeSeenMessage)
                     .then((resolve)=>{
                         socket.emit("YourNotifications", resolve);
-                    }).catch((err)=>{
+                    })
+                   // .then(removeSeenMessage(userEmail))
+                    .catch((err)=>{
                         logger.error(err,'SocketLib:removeSeenMessage',10)
                     })
             }
+
+
+            findAndSendNotification(userEmail)
         })
 
         /** HISTORY SOCKET */
 
         socket.on('sendHistory', (ExpenseId)=>{
             console.log('send History for:'+ ExpenseId)
-            findAndSendHistory()
 
             let findAndSendHistory = (ExpenseId) => {
                 HistoryModel.findOne({ExpenseId:ExpenseId})
@@ -90,6 +92,8 @@ let server = (server) => {
                     }
                 })
             }
+
+            findAndSendHistory(ExpenseId)
         })
 
     })
