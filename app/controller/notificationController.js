@@ -39,8 +39,7 @@ let notifyOnNewExpense = (expenseData) => {
             let uniqueMemberArray = getUnique(expenseData.member)
             let count = 0
             let len = uniqueMemberArray.length
-            for (let x of expenseData.member) {
-                console.log('x:'+x)
+            for (let x of uniqueMemberArray) {
                 NotificationModel.findOne({ email: x }, (err, result) => {
                     if (err) {
                         logger.error(err, 'Notification Controller : newNotificationOnExpenseCreation', 10)
@@ -49,14 +48,15 @@ let notifyOnNewExpense = (expenseData) => {
                         let newNotification = new NotificationModel({
                             email: x,
                             message: `New expense : ${expenseData.ExpenseName} added by ${expenseData.createdBy} on ${expenseData.createdOn}`
-                        })
+                        });
 
                         newNotification.save((err, result) => {
                             if (err) {
-                                logger.error(err.message, 'ExpenseController: createExpense', 10)
+                                logger.error(err, 'ExpenseController: createExpense', 10)
+                                reject(err)
                             }
                             else {
-                                console.log(result)
+                                console.log('RESULT=========>>>>>>'+result)
                                 logger.info('notification saved', 'Notification Controller : newNotificationOnExpenseCreation', 10)
 
                                 /** SEND MAIL */
@@ -69,7 +69,6 @@ let notifyOnNewExpense = (expenseData) => {
                               
                                   transporter.sendMail(mailOptions, function (error, result) {
                                     if (error) {
-                                      console.log(error);
                                       logger.error(
                                         error,
                                         "NotificationController:send mail",
