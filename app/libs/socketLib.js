@@ -65,7 +65,7 @@ let server = (server) => {
                     .then((resolve)=>{
                         socket.emit("YourNotifications", resolve);
                     })
-                   // .then(removeSeenMessage(userEmail))
+                    .then(removeSeenMessage(userEmail))
                     .catch((err)=>{
                         logger.error(err,'SocketLib:removeSeenMessage',10)
                     })

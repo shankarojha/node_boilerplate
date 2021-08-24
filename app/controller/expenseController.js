@@ -133,21 +133,16 @@ let editExpense = (req, res) => {
             let options = req.body;
             let update = {
                 $set: {
-                    createdBy: options.createdBy,
-                    paidBy: options.paidBy,
                     amount: options.amount,
                     modifiedOn: time.now(),
-                },
-                $push: {
-                    member: options.paidBy
-                }
+                } 
             }
             console.log(req.body.ExpenseId)
             console.log('paidby' + options.paidBy)
             ExpenseModel.updateOne({ ExpenseId: options.ExpenseId }, update)
                 .exec((err, result) => {
                     if (err) {
-                        logger.error(err.message, 'ExpenseController: editExpense', 10)
+                        logger.error(err, 'ExpenseController: editExpense', 10)
                         let apiResponse = response.generate(true, 'Failed To edit Expense details', 500, null)
                         res.send(apiResponse)
                         reject(apiResponse)
@@ -188,7 +183,7 @@ let editExpense = (req, res) => {
                     }, (err, result) => {
                         if (err) {
                             console.log(err)
-                            logger.error(err.message, 'ExpenseController: createExpense:addDebtors', 10)
+                            logger.error(err, 'ExpenseController: createExpense:addDebtors', 10)
                             let apiResponse = response.generate(true, 'Failed to create & save new Expense', 500, null)
                             reject(apiResponse)
                         } else {
@@ -246,7 +241,7 @@ let editExpense = (req, res) => {
         .then(removemember)
         .then((resolve) => {
             console.log(resolve)
-            let apiResponse = response.generate(false, 'new Expense edited successfully', 200, resolve)
+            let apiResponse = response.generate(false, 'Expense edited successfully', 200, resolve)
             res.send(apiResponse)
             // emitting edited Expense for notification
             eventEmitter.emit("Expense-edited", resolve);

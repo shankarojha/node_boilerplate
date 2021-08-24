@@ -280,7 +280,8 @@ let loginFunction = (req, res) => {
                 authToken: result.authToken,
                 userDetails: tokenDetails.userDetails,
               };
-              resolve(response);
+                resolve(response);
+              
             }
           });
         } else {
@@ -304,7 +305,7 @@ let loginFunction = (req, res) => {
               reject(apiResponse);
             } else {
               let response = {
-                authToken: updateToken,
+                authToken: updateToken.authToken,
                 userDetails: tokenDetails.userDetails,
               };
               console.log('tesrt auth:'+response.authToken)
