@@ -99,7 +99,7 @@ let createNewExpense = (req, res) => {
         .then((resolve) => {
             //emitting Expense creation for listening and notifiaction and finally resolving the Expense object
             eventEmitter.emit("new-Expense-created & saved", resolve.ExpenseId);
-            let apiResponse = response.generate(false, 'new Expense created successfully', 200, resolve)
+            let apiResponse = response.generate(false, 'New expense created successfully', 200, resolve)
             res.send(apiResponse)
         })
         .catch((err) => {
@@ -283,10 +283,6 @@ eventEmitter.on("Expense-edited", (resolveInfo) => {
 /** UPDATE PAYMENT INFO */
 
 let updatePaymentInfo = (req, res) => {
-    console.log(req.body.email)
-    console.log(req.body.paid)
-    console.log(req.body.ExpenseId)
-    console.log(req.body.userEmail)
 
     let removePaid = () => {
         return new Promise((resolve, reject) => {
@@ -349,7 +345,7 @@ let updatePaymentInfo = (req, res) => {
 
 /** DELETE EXPENSE */
 
-let deleteExpense = (req, res) => { // testing not done
+let deleteExpense = (req, res) => {
 
     ExpenseModel.findOneAndDelete({ ExpenseId: req.body.ExpenseId }).exec((err, result) => {
         if (err) {

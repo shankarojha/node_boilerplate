@@ -227,7 +227,7 @@ let loginFunction = (req, res) => {
         } else {
           tokenDetails.userId = userDetails.userId;
           tokenDetails.userDetails = userDetails;
-          console.log('test token details:'+tokenDetails)
+          console.log('test token details:' + tokenDetails)
           resolve(tokenDetails);
         }
       });
@@ -280,8 +280,8 @@ let loginFunction = (req, res) => {
                 authToken: result.authToken,
                 userDetails: tokenDetails.userDetails,
               };
-                resolve(response);
-              
+              resolve(response);
+
             }
           });
         } else {
@@ -308,7 +308,7 @@ let loginFunction = (req, res) => {
                 authToken: updateToken.authToken,
                 userDetails: tokenDetails.userDetails,
               };
-              console.log('tesrt auth:'+response.authToken)
+              console.log('tesrt auth:' + response.authToken)
               resolve(response);
             }
           });
@@ -332,7 +332,7 @@ let loginFunction = (req, res) => {
       res.send(apiResponse);
     }).catch((err) => {
       res.status(err.status).send(err)
-  })
+    })
 };
 
 /** Logout Function */
@@ -442,7 +442,6 @@ let forgotPassword = (req, res) => {
       if (req.body.email) {
         UserModel.findOne({ email: req.body.email }).exec((err, result) => {
           if (err) {
-            console.log(err);
             logger.error(
               "Failed To Retrieve User Data",
               "userController: findUser()",
@@ -622,12 +621,14 @@ let forgotPassword = (req, res) => {
     .then((resolve) => {
       let apiResponse = response.generate(
         false,
-        "link generated successfully",
+        "reset link has been sent to your email id successfully",
         200,
         resolve
       );
       res.send(apiResponse);
-    });
+    }).catch((err) => {
+      res.send(err);;
+    })
 };
 
 /** Reset password */
@@ -668,7 +669,7 @@ let resetPassword = (req, res) => {
         console.log("User details Password edited ed");
         let apiResponse = response.generate(
           false,
-          "User details Password edited ed",
+          "User details Password reset",
           200,
           result
         );
