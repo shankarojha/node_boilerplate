@@ -59,7 +59,7 @@ let signupFunction = (req, res) => {
     return new Promise((resolve, reject) => {
       UserModel.findOne({ email: req.body.email }, (err, result) => {
         if (err) {
-          logger.error(err.message, "user-controller", 10);
+          logger.error(err, "user-controller", 10);
           let apiResponse = response.generate(
             true,
             "Create user failed",
@@ -80,7 +80,7 @@ let signupFunction = (req, res) => {
           // save new user info
           newUser.save((err, result) => {
             if (err) {
-              logger.error(err.message, "userController: createUser", 10);
+              logger.error(err, "userController: createUser", 10);
               let apiResponse = response.generate(
                 true,
                 "Failed to create new User",
@@ -340,10 +340,10 @@ let loginFunction = (req, res) => {
 let logout = (req, res) => {
   AuthModel.findOneAndRemove({ userId: req.body.userId }, (err, result) => {
     if (err) {
-      logger.error(err.message, "user Controller: logout", 10);
+      logger.error(err, "user Controller: logout", 10);
       let apiResponse = response.generate(
         true,
-        `error occurred: ${err.message}`,
+        `error occurred: ${err}`,
         500,
         null
       );
@@ -372,7 +372,7 @@ let logout = (req, res) => {
 let getAllUsers = (req, res) => {
   UserModel.find().exec((err, details) => {
     if (err) {
-      logger.error(err.message, "userController: getAllUserOnSystem", 10);
+      logger.error(err, "userController: getAllUserOnSystem", 10);
       let apiResponse = response.generate(
         true,
         "Failed To find  Users",
@@ -409,7 +409,7 @@ let getSingleUser = (req, res) => {
     .exec((err, result) => {
       if (err) {
         console.log(err);
-        logger.error(err.message, "userController: getSingleUserInfo", 10);
+        logger.error(err, "userController: getSingleUserInfo", 10);
         let apiResponse = response.generate(
           true,
           "Failed to find  user details",
@@ -646,7 +646,7 @@ let resetPassword = (req, res) => {
     ).exec((err, result) => {
       if (err) {
         logger.error(
-          err.message,
+          err,
           "UserController: Password edited AnExistingUser",
           10
         );

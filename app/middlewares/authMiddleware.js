@@ -22,7 +22,7 @@ let isAuthorized = (req, res, next) => {
       },
       (err, authDetails) => {
         if (err) {
-          logger.error(err.message, "AuthorizationMiddleware", 10);
+          logger.error(err, "AuthorizationMiddleware", 10);
           let apiResponse = response.generate(
             true,
             "Failed To Authorized",
@@ -49,7 +49,7 @@ let isAuthorized = (req, res, next) => {
             authDetails.tokenSecret,
             (err, decoded) => {
               if (err) {
-                logger.error(err.message, "Authorization Middleware", 10);
+                logger.error(err, "Authorization Middleware", 10);
                 let apiResponse = response.generate(
                   true,
                   "Failed To Authorized",

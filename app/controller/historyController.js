@@ -29,7 +29,7 @@ let createHistoryOnEdit = (expenseData) => {
             })
             newHistory.save((err,result)=>{
                 if (err) {
-                    logger.error(err.message, 'ExpenseController: createExpense', 10)
+                    logger.error(err, 'ExpenseController: createExpense', 10)
                 }
                 else {
                     logger.info('History saved', 'History Controller : newHistoryOnExpenseCreation', 10)
@@ -42,7 +42,7 @@ let createHistoryOnEdit = (expenseData) => {
                 }
             }, (err, result) => {
                 if (err) {
-                    logger.error(err.message, 'ExpenseController: createExpense', 10)
+                    logger.error(err, 'ExpenseController: createExpense', 10)
                 }
                 else {
                     logger.info('History saved and updated', 'History Controller : newHistoryOnExpenseCreation', 10) 
@@ -63,7 +63,7 @@ let createHistoryOnUpdate = (expenseData) => {
             })
             newHistory.save((err,result)=>{
                 if (err) {
-                    logger.error(err.message, 'ExpenseController: createExpense', 10)
+                    logger.error(err, 'ExpenseController: createExpense', 10)
                 }
                 else {
                     logger.info('History saved', 'History Controller : newHistoryOnExpenseCreation', 10)
@@ -76,7 +76,7 @@ let createHistoryOnUpdate = (expenseData) => {
                 }
             }, (err, result) => {
                 if (err) {
-                    logger.error(err.message, 'ExpenseController: createExpense', 10)
+                    logger.error(err, 'ExpenseController: createExpense', 10)
                 }
                 else {
                     logger.info('History saved and updated', 'History Controller : newHistoryOnExpenseCreation', 10)

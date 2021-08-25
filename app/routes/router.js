@@ -16,6 +16,8 @@ module.exports.setRouter = (app) => {
     app.post('/forgotpassword',userController.forgotPassword)
 
     app.post(`/resetpassword`,authMiddleware.isAuthorized, userController.resetPassword)
+    
+    app.post('/logout',authMiddleware.isAuthorized, userController.logout)
 
     app.post(`/createexpense`,authMiddleware.isAuthorized,expenseController.createNewExpense)
 
@@ -29,5 +31,7 @@ module.exports.setRouter = (app) => {
 
     app.post('/updatepaymentInfo',authMiddleware.isAuthorized, expenseController.updatePaymentInfo)
 
-    app.post('/logout',authMiddleware.isAuthorized, userController.logout)
+    app.post('/deleteexpense',authMiddleware.isAuthorized, expenseController.deleteExpense)
+
+    
 }

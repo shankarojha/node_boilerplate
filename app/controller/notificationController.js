@@ -79,7 +79,7 @@ let notifyOnNewExpense = (expenseData) => {
                                     }
                                   });
                                 /**SEND MAIL END */
-                                count ++
+                                count++
 
                                 if(count===len){
                                     resolve(result)
@@ -94,7 +94,7 @@ let notifyOnNewExpense = (expenseData) => {
                             }
                         }, (err, result) => {
                             if (err) {
-                                logger.error(err.message, 'ExpenseController: createExpense', 10)
+                                logger.error(err, 'ExpenseController: createExpense', 10)
                                 reject(err)
                             }
                             else {
@@ -123,7 +123,7 @@ let notifyOnNewExpense = (expenseData) => {
                                   });
                                 /**SEND MAIL END */
 
-                                count ++
+                                count++
                                 
                                 if(count===len){
                                     resolve(result)

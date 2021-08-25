@@ -49,7 +49,7 @@ let createNewExpense = (req, res) => {
             newExpense.save((err, newExpense) => {
                 if (err) {
                     console.log("error while saving new Expense: ", err)
-                    logger.error(err.message, 'ExpenseController: createExpense', 10)
+                    logger.error(err, 'ExpenseController: createExpense', 10)
                     let apiResponse = response.generate(true, 'Failed to create&save new Expense', 500, null)
                     reject(apiResponse)
                 }
@@ -78,7 +78,7 @@ let createNewExpense = (req, res) => {
                     }
                 }, (err, result) => {
                     if (err) {
-                        logger.error(err.message, 'ExpenseController: createExpense:addDebtors', 10)
+                        logger.error(err, 'ExpenseController: createExpense:addDebtors', 10)
                         let apiResponse = response.generate(true, 'Failed to create & save new Expense', 500, null)
                         reject(apiResponse)
                     } else {
@@ -109,10 +109,9 @@ let createNewExpense = (req, res) => {
 
 /** handle emitted event from createnewExpense */
 eventEmitter.on("new-Expense-created & saved", (ExpenseId) => {
-    console.log('eON' + ExpenseId)
     ExpenseModel.findOne({ 'ExpenseId': ExpenseId }, (err, result) => {
         if (err) {
-            logger.error(err.message, 'ExpenseController: getSingleExpenseDetails', 10)
+            logger.error(err, 'ExpenseController: getSingleExpenseDetails', 10)
 
         } else if (check.isEmpty(result)) {
             logger.info('No Expense found', 'ExpenseController: getSingleExpenseDetails')
@@ -217,7 +216,7 @@ let editExpense = (req, res) => {
                     }
                     ExpenseModel.updateOne({ ExpenseId: req.body.ExpenseId }, update, (err, result) => {
                         if (err) {
-                            logger.error(err.message, 'ExpenseController: editExpense:removemember', 10)
+                            logger.error(err, 'ExpenseController: editExpense:removemember', 10)
                             let apiResponse = response.generate(true, 'Failed to create & save new Expense', 500, null)
                             reject(apiResponse)
                         } else {
@@ -256,7 +255,7 @@ let editExpense = (req, res) => {
 eventEmitter.on("Expense-edited", (resolveInfo) => {
     ExpenseModel.findOne({ 'ExpenseId': resolveInfo.ExpenseId }, (err, result) => {
         if (err) {
-            logger.error(err.message, 'ExpenseController: getSingleExpenseDetails', 10)
+            logger.error(err, 'ExpenseController: getSingleExpenseDetails', 10)
 
         } else if (check.isEmpty(result)) {
             logger.info('No Expense found', 'ExpenseController: getSingleExpenseDetails')
@@ -352,9 +351,9 @@ let updatePaymentInfo = (req, res) => {
 
 let deleteExpense = (req, res) => { // testing not done
 
-    ExpenseModel.findOneAndDelete({ ExpenseId: req.params.ExpenseId }).exec((err, result) => {
+    ExpenseModel.findOneAndDelete({ ExpenseId: req.body.ExpenseId }).exec((err, result) => {
         if (err) {
-            logger.error(err.message, 'ExpenseController: deleteExpense', 10)
+            logger.error(err, 'ExpenseController: deleteExpense', 10)
             let apiResponse = response.generate(true, 'Failed To delete Expense', 500, null)
             res.send(apiResponse)
         } else if (check.isEmpty(result)) {
@@ -362,6 +361,7 @@ let deleteExpense = (req, res) => { // testing not done
             let apiResponse = response.generate(true, 'No Expense Found', 404, null)
             res.send(apiResponse)
         } else {
+            logger.info(result, 'ExpenseController: deleteExpense')
             let apiResponse = response.generate(false, 'Expense is deleted  successfully', 200, result)
             res.send(apiResponse)
         }
@@ -376,7 +376,7 @@ let getAllExpense = (req, res) => {
         .lean()
         .exec((err, result) => {
             if (err) {
-                logger.error(err.message, 'ExpenseController: getAllExpense', 10)
+                logger.error(err, 'ExpenseController: getAllExpense', 10)
                 let apiResponse = response.generate(true, 'Failed To Find Expense Details', 500, null)
                 res.send(apiResponse)
             } else if (check.isEmpty(result)) {
@@ -400,7 +400,7 @@ let getExpenseOfAUser = (req, res) => {
         .sort('-modifiedOn')
         .exec((err, result) => {
             if (err) {
-                logger.error(err.message, 'Expense Controller: getExpenseOfAUser', 10)
+                logger.error(err, 'Expense Controller: getExpenseOfAUser', 10)
                 let apiResponse = response.generate(true, 'Failed To Find Expense Details', 500, null)
                 res.send(apiResponse)
             } else if (check.isEmpty(result)) {
@@ -424,7 +424,7 @@ let getSingleExpenseDetails = (req, res) => {
         .lean()
         .exec((err, result) => {
             if (err) {
-                logger.error(err.message, 'ExpenseController: getSingleExpenseDetails', 10)
+                logger.error(err, 'ExpenseController: getSingleExpenseDetails', 10)
                 let apiResponse = response.generate(true, 'Failed To Find Expense Details', 500, null)
                 res.send(apiResponse)
             } else if (check.isEmpty(result)) {
