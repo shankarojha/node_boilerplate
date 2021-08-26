@@ -568,7 +568,7 @@ let forgotPassword = (req, res) => {
       let userId = apiResponse.userDetails.userId;
       let authToken = apiResponse.authToken;
       let response = {
-        link: `http://localhost:4200/user/resetpassword/${userId}?authToken=${authToken}`,
+        link: `http://firstpro.onine/user/resetpassword/${userId}?authToken=${authToken}`,
         userEmail: apiResponse.userDetails.email
       }
 
